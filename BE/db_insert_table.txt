@@ -1,0 +1,16 @@
+// Create table accounts 
+CREATE TABLE accounts (
+	user_id SERIAL PRIMARY KEY,
+	email VARCHAR(100) NOT NULL,
+	password VARCHAR(200) NOT NULL
+)
+
+// Create table boundedbox
+CREATE TABLE boundedbox (
+	boundedbox_id SERIAL PRIMARY KEY, 
+	position VARCHAR(100) NOT NULL,
+	description VARCHAR(100) NOT NULL,
+	user_id INT NOT NULL,
+	FOREIGN KEY (user_id) 
+		REFERENCES accounts(user_id)
+)
