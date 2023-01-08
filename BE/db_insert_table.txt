@@ -9,7 +9,10 @@ CREATE TABLE accounts (
 CREATE TABLE boundedbox (
 	boundedbox_id SERIAL PRIMARY KEY, 
 	position VARCHAR(100) NOT NULL,
+	length INT NOT NULL,
+	width INT NOT NULL,
 	description VARCHAR(100) NOT NULL,
+	image	VARCHAR(100) NOT NULL,
 	user_id INT NOT NULL,
 	FOREIGN KEY (user_id) 
 		REFERENCES accounts(user_id)
