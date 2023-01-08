@@ -67,6 +67,7 @@ def signup():
                 'message': 'Signup successfully!'
             })
 
+#Login
 @app.route('/login', methods=['POST'])
 def login():
     _json = request.json
@@ -104,12 +105,47 @@ def login():
                 return jsonify({
                     'message': 'Login successfully!'
                 })
-          
+#Logout         
 @app.route('/logout')
 def logout():
     if 'email' in session:
         session.pop('email', None)
     return jsonify({'message' : 'You successfully logged out'})
-          
+
+#Add annotated data information
+@app.route('/boundingbox/add', methods=['POST'])
+def boundingboxAdd():
+    conn = get_db_connection()          
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    _json = request.json
+    _position = _json['position']
+    _length = _json['length'] 
+    _width = _json['width']
+    _description = _json['description']
+    _image = _json['image']
+
+    if 'email' in session:
+        #Find user_id by email get from session
+        email = session['email']
+        sql = "SELECT user_id FROM accounts WHERE email=%s"
+        sql_where = (email,)
+        cursor.execute(sql, sql_where)
+        row = cursor.fetchone()
+        user_id = row['user_id']
+        
+        sql_insert = 'INSERT INTO boundedbox (POSITION, LENGTH, WIDTH, DESCRIPTION, IMAGE, USER_ID) VALUES (%s, %s, %s, %s, %s, %s)'
+        record_insert = (_position, _length, _width, _description, _image, user_id)
+        cursor.execute(sql_insert, record_insert)
+        return jsonify({
+            'message': 'Add the annotated data successfully!'
+        })
+    else:
+        resp = jsonify({
+            'message': 'Use cannot add because you have not loggin!'
+        })
+        resp.status_code = 400
+        return resp
+
 if __name__ == "__main__":
     app.run(use_reloader=True)
